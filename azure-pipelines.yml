@@ -15,6 +15,14 @@ steps:
   inputs:
     command: 'custom'
     customCommand: 'install -g azure-streamanalytics-cicd'
+  
+- task: CmdLine@2
+  inputs:
+  - task: CmdLine@2
+    inputs:
+      script: |
+        azure-streamanalytics-cicd build --v2 -project $(projectRootPath)/asaproj.json -outputpath
+        $(projectRootPath)/$(outputPath)/$(deployPath)
 
 stages:
 - stage: Build
