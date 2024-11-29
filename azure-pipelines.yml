@@ -16,34 +16,34 @@ steps:
     command: 'custom'
     customCommand: 'install -g azure-streamanalytics-cicd'
 
-# stages:
-# - stage: Build
-#   displayName: 'Build Stage'
-#   jobs:
-#   - job: Build
-#     displayName: 'Install Dependencies'
-#     pool:
-#       name: MySelfHostedPool 
-#       vmImage: 'windows-latest'
-#     steps:
-#     - checkout: self
-#       fetchDepth: 0  # Fetches all history
-#     - script: |
-#         npm install
-#       displayName: 'Install dependencies'
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: Build
+    displayName: 'Install Dependencies'
+    pool:
+      name: MySelfHostedPool 
+      vmImage: 'windows-latest'
+    steps:
+    - checkout: self
+      fetchDepth: 0  # Fetches all history
+    - script: |
+        npm install
+      displayName: 'Install dependencies'
 
-# - stage: Test
-#   displayName: 'Test Stage'
-#   jobs:
-#   - job: Test
-#     displayName: 'Run Tests'
-#     pool:
-#       name: MySelfHostedPool 
-#       vmImage: 'windows-latest'
-#     steps:
-#     - script: |
-#         npm test
-#       displayName: 'Run Unit Tests'
+- stage: Test
+  displayName: 'Test Stage'
+  jobs:
+  - job: Test
+    displayName: 'Run Tests'
+    pool:
+      name: MySelfHostedPool 
+      vmImage: 'windows-latest'
+    steps:
+    - script: |
+        npm test
+      displayName: 'Run Unit Tests'
       
 # - stage: Deploy
 #   displayName: 'Deploy Stage'
