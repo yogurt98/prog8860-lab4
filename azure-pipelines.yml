@@ -56,6 +56,9 @@ stages:
         artifact: functionapp
         path: $(Pipeline.Workspace)
       displayName: 'Download Deployment Artifact'
+    - script: |
+        echo "Pipeline.Workspace: $(Pipeline.Workspace)"
+      displayName: 'Echo Pipeline.Workspace'
     - task: AzureFunctionApp@1
       inputs:
         azureSubscription: 'myConnection'
