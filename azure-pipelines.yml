@@ -3,61 +3,59 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-stages:
-- stage: Build
-  displayName: 'Build Stage'
-  jobs:
-  - job: Build
-    displayName: 'Install Dependencies and Package App'
-    pool:
-      name: MySelfHostedPool
-    steps:
-    - checkout: self
-      fetchDepth: 0
-    - script: |
-        npm install
-      displayName: 'Install dependencies'
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.SourcesDirectory)'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/package/function.zip'
-        replaceExistingArchive: true
-      displayName: 'Package Function App'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathToPublish: $(Build.ArtifactStagingDirectory)/package
-        artifactName: functionapp
-      displayName: 'Publish Artifact'
+trigger:
+- master
 
-- stage: Test
-  displayName: 'Test Stage'
-  jobs:
-  - job: Test
-    displayName: 'Run Tests'
-    pool:
-      name: MySelfHostedPool
-    steps:
-    - script: |
-        npm test
-      displayName: 'Run Unit Tests'
+pool:
+  name: MySelfHostedPool
+  vmImage: ubuntu-latest
 
-- stage: Deploy
-  displayName: 'Deploy Stage'
-  jobs:
-  - job: Deploy
-    displayName: 'Deploy Function to Azure'
-    pool:
-      name: MySelfHostedPool
-    steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        artifact: functionapp
-        path: $(Pipeline.Workspace)
-      displayName: 'Download Deployment Artifact'
-    - task: AzureFunctionApp@1
-      inputs:
-        azureSubscription: 'myConnection'
-        appName: 'myFunctionApps01'
-        package: '$(Pipeline.Workspace)/function.zip'
+steps:
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'install -g azure-streamanalytics-cicd'
+
+# stages:
+# - stage: Build
+#   displayName: 'Build Stage'
+#   jobs:
+#   - job: Build
+#     displayName: 'Install Dependencies'
+#     pool:
+#       name: MySelfHostedPool 
+#       vmImage: 'windows-latest'
+#     steps:
+#     - checkout: self
+#       fetchDepth: 0  # Fetches all history
+#     - script: |
+#         npm install
+#       displayName: 'Install dependencies'
+
+# - stage: Test
+#   displayName: 'Test Stage'
+#   jobs:
+#   - job: Test
+#     displayName: 'Run Tests'
+#     pool:
+#       name: MySelfHostedPool 
+#       vmImage: 'windows-latest'
+#     steps:
+#     - script: |
+#         npm test
+#       displayName: 'Run Unit Tests'
+      
+# - stage: Deploy
+#   displayName: 'Deploy Stage'
+#   jobs:
+#   - job: Deploy
+#     displayName: 'Deploy Function to Azure'
+#     pool:
+#       name: MySelfHostedPool 
+#       vmImage: 'windows-latest'
+#     steps:
+#     - task: AzureFunctionApp@1
+#       inputs:
+#         azureSubscription: 'myConnection'
+#         appName: 'myFunctionApps01'
+#         package: '$(System.DefaultWorkingDirectory)/**/*.zip'
