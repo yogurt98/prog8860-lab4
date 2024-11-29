@@ -38,7 +38,7 @@ stages:
     steps:
     - task: AzureFunctionApp@1
       inputs:
-        azureSubscription: 'YourAzureServiceConnection' # Replace with your Azure service connection
-        appName: 'YourFunctionAppName'                 # Replace with your Azure Function App name
+        azureSubscription: 'myConnection'
+        appName: 'myFunctionApps01'
         package: '$(System.DefaultWorkingDirectory)/**/*.zip'
 
