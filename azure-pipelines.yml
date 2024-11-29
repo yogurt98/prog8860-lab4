@@ -17,10 +17,13 @@ stages:
     - script: |
         npm install
       displayName: 'Install dependencies'
-    - script: |
-        mkdir $(Build.ArtifactStagingDirectory)\package
-        cd $(Build.SourcesDirectory)
-        zip -r $(Build.ArtifactStagingDirectory)/package/function.zip *
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/package/function.zip'
+        replaceExistingArchive: true
       displayName: 'Package Function App'
     - task: PublishBuildArtifacts@1
       inputs:
