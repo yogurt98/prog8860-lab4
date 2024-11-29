@@ -10,7 +10,6 @@ stages:
   - job: Build
     displayName: 'Install Dependencies'
     pool:
-      name: New Agent Pool
       vmImage: 'windows-latest'
     steps:
     - checkout: self
