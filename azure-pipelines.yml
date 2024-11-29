@@ -8,16 +8,25 @@ stages:
   displayName: 'Build Stage'
   jobs:
   - job: Build
-    displayName: 'Install Dependencies'
+    displayName: 'Install Dependencies and Package App'
     pool:
-      name: MySelfHostedPool 
-      vmImage: 'windows-latest'
+      name: MySelfHostedPool
     steps:
     - checkout: self
-      fetchDepth: 0  # Fetches all history
+      fetchDepth: 0
     - script: |
         npm install
       displayName: 'Install dependencies'
+    - script: |
+        mkdir $(Build.ArtifactStagingDirectory)\package
+        cd $(Build.SourcesDirectory)
+        zip -r $(Build.ArtifactStagingDirectory)/package/function.zip *
+      displayName: 'Package Function App'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: $(Build.ArtifactStagingDirectory)/package
+        artifactName: functionapp
+      displayName: 'Publish Artifact'
 
 - stage: Test
   displayName: 'Test Stage'
@@ -25,25 +34,27 @@ stages:
   - job: Test
     displayName: 'Run Tests'
     pool:
-      name: MySelfHostedPool 
-      vmImage: 'windows-latest'
+      name: MySelfHostedPool
     steps:
     - script: |
         npm test
       displayName: 'Run Unit Tests'
-      
+
 - stage: Deploy
   displayName: 'Deploy Stage'
   jobs:
   - job: Deploy
     displayName: 'Deploy Function to Azure'
     pool:
-      name: MySelfHostedPool 
-      vmImage: 'windows-latest'
+      name: MySelfHostedPool
     steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: functionapp
+        path: $(Pipeline.Workspace)
+      displayName: 'Download Deployment Artifact'
     - task: AzureFunctionApp@1
       inputs:
         azureSubscription: 'myConnection'
         appName: 'myFunctionApps01'
-        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
-
+        package: '$(Pipeline.Workspace)/functionapp/function.zip'
