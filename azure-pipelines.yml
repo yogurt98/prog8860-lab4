@@ -25,6 +25,7 @@ stages:
   - job: Test
     displayName: 'Run Tests'
     pool:
+      name: MySelfHostedPool 
       vmImage: 'windows-latest'
     steps:
     - script: |
@@ -37,6 +38,7 @@ stages:
   - job: Deploy
     displayName: 'Deploy Function to Azure'
     pool:
+      name: MySelfHostedPool 
       vmImage: 'windows-latest'
     steps:
     - task: AzureFunctionApp@1
